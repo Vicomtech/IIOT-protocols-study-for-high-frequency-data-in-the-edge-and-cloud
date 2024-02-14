@@ -68,7 +68,7 @@ This project tests different protocols (AMQP, MQTT, ZEROMQ, KAFKA and OPCUA) sim
             * *experimental_results/{edge or cloud}* folder contains 45 .csv numbered files with the following name structure *{edge or cloud}_experiments_RUN{iteration_number}.csv*. Each of them contain the following extracted metrics and metadata over the raw .csv files: 
                 - Metrics: mean latency, latency_stdev, mean jitter, jitter_stdev lost_packages, not_ordered_packages.
                 - Metadata:	protocol (employed protocol), data_type (data type employed in the experiments), list_length (data packet size), sampl_freq (data packet rate), cycles (duration of the experiment), Mbytes/Sec (experiment troughput), Payload(Kbytes) (data packet payload).
-            * *experimental_results/{edge or cloud}/{edge or cloud}_experiments.csv*: This file contains the mean of all the *{edge or cloud}_experiments_RUN{id}.csv* individual experiment iterations grouped by same *protocol/data_packet_length/data_packet_rate* combination. This file is employed for visualizing the results. For visualizing them, please refer to *https://github.com/telmobarrena98/Protocols_tester/2-Result_Visualizer_edgeORcloud.py*.
+            * *experimental_results/{edge or cloud}/{edge or cloud}_experiments.csv*: This file contains the mean of all the *{edge or cloud}_experiments_RUN{id}.csv* individual experiment iterations grouped by same *protocol/data_packet_length/data_packet_rate* combination. This file is employed for visualizing the results. For visualizing them, please refer to the next *FOR VISUALIZING THE RESULTS* section.
         
             
 
