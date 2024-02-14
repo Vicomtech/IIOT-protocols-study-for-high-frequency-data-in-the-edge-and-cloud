@@ -73,7 +73,7 @@ This project tests different protocols (AMQP, MQTT, ZEROMQ, KAFKA and OPCUA) sim
             
 
 - **Link to download the dataset:**
-https://opendatasets.vicomtech.org/di13-iiot-protocols-study-for-high-frequency-data-in-the-edge-and-cloud/ed32cd1d
+https://opendatasets.vicomtech.org/di13-iiot-protocols-study-for-high-frequency-data-edge-cloud/9294245f
 
 - **Authors:**
 Telmo Fernández De Barrena, Ander García and Juan Luis Ferrando
