@@ -1,0 +1,17 @@
+name: ertzean
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - paho-mqtt
+  - numpy
+  - pika
+  - pip
+  - pandas
+  - python-confluent-kafka
+  - orjson
+  - pip:
+    - cryptography
+    - tornado
+    - pyzmq  

@@ -1,0 +1,45 @@
+version: "3.3"
+services:
+  
+  rabbitmq3: 
+    image: rabbitmq:3-management
+    container_name: 'rabbitmq'
+    # environment:
+    #       - RABBITMQ_DEFAULT_USER=guest
+    #       - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - 5672:5672
+      - 5673:5673
+      - 15672:15672
+    expose:
+      - "5672"
+    volumes:
+      # - .rabbitmq/data/:/var/lib/rabbitmq/
+      - .rabbitmq/log/:/var/log/rabbitmq
+      - .rabbitmq/data:/var/lib/rabbitmq/mnesia
+      # - .rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      # - .rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=pass
+    networks:
+      - test_consumer
+
+  consumer:
+    container_name: suscriberproducer
+    build: ./consumer
+    depends_on: 
+      - rabbitmq3
+    restart: unless-stopped
+    environment:
+      PROTOCOL: amqp
+      NUMBER_OF_COMBINATIONS: 9 # number of SAMPLING_FREQ and LIST_LEN combinations
+      broker: edge # edge, cloud
+      TZ: "Europe/Madrid"
+    volumes:
+      - ./results/:/app/app/results/
+    networks: 
+     - test_consumer
+
+networks: 
+  test_consumer:

@@ -1,0 +1,60 @@
+version: "3.3"
+services:
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks: 
+     - test_consumer
+
+  kafkabroker: 
+    # image: confluentinc/cp-kafka:5.5.1
+    image: wurstmeister/kafka:latest
+    container_name: kafkabroker
+    ports:
+    # To learn about configuring Kafka for access across networks see
+    # https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/
+      #- "9092:9092" # lo usan los clientes/producers que acceden desde la misma red docker (interior)
+      - "29091:29091"
+      - "29092:29092"  # lo usan los clientes/producers que acceden desde otro host al broker de mi PC de Vicom
+      - "29093:29093"
+    depends_on:
+      - zookeeper
+    restart: unless-stopped
+    
+    environment:
+      KAFKA_BROKER_ID: 1 # en kafka pueden haber diferentes brokers (nodos) gestionados por zookeeper. El ID identifica cada nodo
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      # a kafka internamente se le conectan a través del nombre del servicio (kafka-broker con el puerto 9092)
+      # los producers/consumers exteriores a qué IP se van a conectar??   
+      KAFKA_LISTENERS: INTERNAL://:9092, LOCAL_HOST://:29091, MI_PC_VICOM_HOST://:29092, AWS_HOST://:29093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafkabroker:9092, LOCAL_HOST://localhost:29091, MI_PC_VICOM_HOST://192.168.35.106:29092, AWS_HOST://3.70.93.134:29093 # ip de dónde se ejecute este docker-compose # is what clients will use to connect to the brokers.
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT, LOCAL_HOST:PLAINTEXT, MI_PC_VICOM_HOST:PLAINTEXT, AWS_HOST:PLAINTEXT 
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL # se define q la conexión interior se hace a través del kafka-broker:9092
+      KAFKA_CREATE_TOPICS: "q1:1:1,q2:1:1"
+    networks: 
+     - test_consumer
+
+
+  consumer:
+    container_name: suscriberproducer
+    build: ./consumer
+    depends_on: 
+      - kafkabroker
+    restart: unless-stopped
+    environment:
+      PROTOCOL: kafka
+      NUMBER_OF_COMBINATIONS: 9 # number of SAMPLING_FREQ and LIST_LEN combinations
+      broker: edge # edge, cloud
+      TZ: "Europe/Madrid"
+    volumes:
+      - ./results/:/app/app/results/
+    networks: 
+     - test_consumer
+
+networks: 
+  test_consumer:

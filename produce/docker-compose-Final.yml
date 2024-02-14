@@ -1,0 +1,36 @@
+version: "3.3"
+services:
+  producer:
+    # container_name: producer
+    build: ./producer
+    environment:
+      PROTOCOL: amqp # amqp, mqtt, zeromq, kafka
+      # sampling freq and list length are connected by pairs, with the combs we obtain [1,1,1,4,4,4,8,8,8] throuput values
+      SAMPLING_FREQ: "[10, 20, 40, 10, 20, 40, 10, 20, 40]" #high freq
+      LIST_LEN: "[25000, 12500, 6250, 100000, 50000, 25000, 200000, 100000, 50000]" #high freq
+      CYCLES: 30 # seconds of experiment
+      DATA_TYPE : "[int]" #int, float
+      CONNECTION: WiFi
+      RUNS: "[1, 16]" # first included, second no
+      BROKER: edge # edge, cloud
+      TZ: "Europe/Madrid"
+    ports:
+      - 5672:5672
+      - 4840:4840
+    volumes:
+      - ./results/:/app/app/results/
+
+    
+  suscriber:
+    # container_name: suscriber
+    build: ./suscriber
+    environment:
+      PROTOCOL: amqp # amqp, mqtt, zeromq, kafka
+      NUMBER_OF_COMBINATIONS: 9 # number of SAMPLING_FREQ and LIST_LEN combinations
+      BROKER: edge # edge, cloud
+      TZ: "Europe/Madrid"
+    volumes:
+      - ./results/:/app/app/results/
+
+
+  

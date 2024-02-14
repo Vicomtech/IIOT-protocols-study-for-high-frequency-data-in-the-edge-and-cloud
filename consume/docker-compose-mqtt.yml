@@ -1,0 +1,33 @@
+version: "3.3"
+services:
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    volumes:
+      - .mqtt/config/:/mosquitto/config/:rw
+      - .mqtt/log/:/mosquitto/log/
+      - .mqtt/data:/mosquitto/data/
+    ports:
+      - 1883:1883
+      - 9001:9001
+    networks:
+      - test_consumer
+  
+  consumer:
+    container_name: suscriberproducer
+    build: ./consumer
+    depends_on: 
+      - mosquitto
+    restart: unless-stopped
+    environment:
+      PROTOCOL: mqtt
+      NUMBER_OF_COMBINATIONS: 9 # number of SAMPLING_FREQ and LIST_LEN combinations
+      broker: edge # edge, cloud
+      TZ: "Europe/Madrid"
+    volumes:
+      - ./results/:/app/app/results/
+    networks: 
+     - test_consumer
+
+networks: 
+  test_consumer:

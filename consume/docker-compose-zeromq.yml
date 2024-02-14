@@ -1,0 +1,22 @@
+version: "3.3"
+services:
+  
+  consumer:
+    container_name: suscriberproducer
+    build: ./consumer
+    restart: unless-stopped
+    environment:
+      PROTOCOL: zeromq
+      NUMBER_OF_COMBINATIONS: 9 # number of SAMPLING_FREQ and LIST_LEN combinations
+      broker: edge # edge, cloud
+      TZ: "Europe/Madrid"
+    ports:
+      - 1883:1883
+      - 5672:5672
+    volumes:
+      - ./results/:/app/app/results/
+    networks: 
+     - test_consumer
+
+networks: 
+  test_consumer:
